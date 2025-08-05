@@ -181,6 +181,28 @@ function createProductCard(product, isPrimary) {
     `;
 }
 
+function showFreeTextInput(container) {
+    container.innerHTML = `
+        <div class="w-full p-4 bg-gray-50 rounded-lg">
+            <label for="freetext-input" class="block text-sm font-medium text-gray-700 mb-1">Beskriv hvad du leder efter:</label>
+            <textarea id="freetext-input" maxlength="250" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+            <button id="freetext-submit" class="cta-btn w-full mt-2 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Send</button>
+        </div>
+    `;
+
+    document.getElementById('freetext-submit').onclick = () => {
+        const freeTextInput = document.getElementById('freetext-input');
+        const freeText = freeTextInput.value.trim();
+        if (freeText) {
+            // Show loading state while the AI thinks
+            showLoadingState('Et øjeblik, jeg analyserer dit svar...');
+            handleFreeText(freeText).then(nextStep => {
+                renderStep(nextStep);
+            });
+        }
+    };
+}
+
 // --- INTEREST HUB LOGIC (RE-INTEGRATED) ---
 async function renderInterestHub() {
     if (!allInterests.length) {
