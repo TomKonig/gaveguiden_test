@@ -123,16 +123,21 @@ function renderQuestion(question) {
     const answersContainer = template.querySelector('.answers-container');
     answersContainer.innerHTML = '';
     
-    question.answers.forEach(answer => {
-        const btn = document.createElement('button');
-        btn.className = "answer-btn"; // Add your styling classes
-        btn.textContent = answer.answer_text;
+question.answers.forEach(answer => {
+    const btn = document.createElement('button');
+    btn.className = "answer-btn"; // Add your styling classes
+    btn.textContent = answer.answer_text;
+    
+    if (answer.tags && answer.tags.includes("freetext:true")) {
+        btn.onclick = () => showFreeTextInput(answersContainer);
+    } else {
         btn.onclick = () => {
             const nextStep = handleAnswer(currentQuestion, answer);
             renderStep(nextStep);
         };
-        answersContainer.appendChild(btn);
-    });
+    }
+    answersContainer.appendChild(btn);
+});
     
     questionContainer.innerHTML = '';
     questionContainer.appendChild(template);
