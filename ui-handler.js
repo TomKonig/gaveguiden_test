@@ -376,28 +376,18 @@ async function handleSharedResult(shareId) {
         if (!res.ok) throw new Error("Shared result not found or invalid.");
         
         const sharedData = await res.json();
-        if (!sharedData.productId || !sharedData.answers || !sharedData.filters) {
-            throw new Error("Invalid shared data format");
-        }
         
-        // Re-initialize the quiz engine with the shared data
-        // NOTE: The quiz-engine needs a function to handle this state hydration.
-        // For now, we will simulate by manually setting up the state and showing results.
-        
+        // Initialize assets before loading state
         await initializeQuizAssets();
         
-        // This is a simplified way to show the result. A full implementation
-        // would require a `loadSharedState(sharedData)` function in the engine.
-        const allScores = getProductScores(); // We need a way to recalculate scores based on shared answers.
-        
-        // Find the shared product and put it first.
-        const primaryProductScore = allScores.find(s => s.id === sharedData.productId);
-        const otherScores = allScores.filter(s => s.id !== sharedData.productId);
-        const finalScores = [primaryProductScore, ...otherScores].filter(s => s);
+        // Use the new engine function to load the state
+        const nextStep = loadSharedState(sharedData);
 
         heroSection.classList.add('hidden');
         quizSection.classList.remove('hidden');
-        renderResults(finalScores);
+        
+        // Render the results directly
+        renderStep(nextStep);
 
     } catch (err) {
         console.error("Failed to load shared result:", err);
