@@ -226,5 +226,40 @@ export function goBackLogic() {
     return { type: 'question', data: formatQuestionForDisplay(lastQuestion) };
 }
 
+export async function handleFreeText(freeText) {
+    const userAnswersForContext = userProfile.answers.map(a => a.tags).flat();
+    
+    try {
+        const response = await fetch('/.netlify/functions/interpret-freetext', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userAnswers: userAnswersForContext,
+                freeText: freeText
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to interpret free text.');
+        }
+
+        const { tags } = await response.json();
+        
+        // Create a temporary answer object to process the new tags
+        const freeTextAnswer = {
+            answer_text: freeText,
+            tags: tags
+        };
+
+        // This re-uses the existing answer handling logic to update scores
+        return handleAnswer(currentQuestion, freeTextAnswer);
+
+    } catch (error) {
+        console.error("Free text handling failed:", error);
+        // If the API fails, just move on to the next question
+        return getNextQuestion();
+    }
+}
+
 // Add this line at the very end of quiz-engine.js
 export function getUserProfile() { return userProfile; }
