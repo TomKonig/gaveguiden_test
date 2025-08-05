@@ -143,22 +143,24 @@ function formatQuestionForDisplay(question) {
 
 
 export function getNextQuestion() {
-    // The "Tournament of Interests" using Thompson Sampling
+    // This is the "Tournament of Interests" using Thompson Sampling
     const winningCategoryKey = categoryBandit.selectArm();
     
-    // Find a root question for the winning category that hasn't been asked
-    const rootQuestion = findQuestion(null); // This needs to be smarter to pick from the winningCategory
+    // This logic needs to be smarter to find a relevant, unanswered question
+    // for the winning category. For now, we'll use a simplified approach.
+    const nextQ = findQuestion(/* This needs a parent answer ID or null */);
     
-    if (rootQuestion) {
-        return { type: 'question', data: formatQuestionForDisplay(rootQuestion) };
+    if (nextQ) {
+        return { type: 'question', data: formatQuestionForDisplay(nextQ) };
     }
 
-    // Placeholder for AI handoff logic
-    // if (condition for AI is met) {
-    //    return { type: 'loading_ai' };
-    // }
+    // If no more pre-written questions are found, handoff to the AI.
+    // We will add more sophisticated rules for this later.
+    if (questionHistory.length > 3 && questionHistory.length < 8) { // Example condition
+        return { type: 'loading_ai' }; // Signal to the UI to show a loading state
+    }
 
-    // If no more questions, show results
+    // If all else fails, show results.
     console.log("No more questions, showing results.");
     return { type: 'results', data: getProductScores() };
 }
@@ -286,6 +288,37 @@ export function loadSharedState(sharedData) {
     // We don't need to replay the quiz, just show the final results
     // based on the restored state.
     return { type: 'results', data: getProductScores() };
+}
+
+async function fetchAIQuestion() {
+    console.log("Handoff to AI for question generation...");
+    const topScores = getProductScores().slice(0, 5);
+    const topProductIds = topScores.map(p => p.id);
+
+    try {
+        const response = await fetch('/.netlify/functions/generate-ai-question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userProfile: getUserProfile(),
+                topProductIds: topProductIds
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('AI question generation failed.');
+        }
+
+        const { question } = await response.json();
+        // Add the new question to our in-memory list for this session
+        allQuestions.push(question);
+        return { type: 'question', data: formatQuestionForDisplay(question) };
+
+    } catch (error) {
+        console.error("AI Handoff Error:", error);
+        // If AI fails, gracefully exit to results.
+        return { type: 'results', data: getProductScores() };
+    }
 }
 
 // Add this line at the very end of quiz-engine.js
