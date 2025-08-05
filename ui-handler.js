@@ -89,6 +89,11 @@ function renderStep(step) {
         renderQuestion(step.data);
     } else if (step.type === 'interest_hub') {
         renderInterestHub();
+    } else if (step.type === 'loading_ai') {
+        // This is the new, correct logic
+        showLoadingState('Et øjeblik, jeg finder på et rigtig godt spørgsmål til dig...');
+        // The fetchAIQuestion function from the engine will now be called by the UI
+        fetchAIQuestion().then(nextStep => renderStep(nextStep));
     } else if (step.type === 'results') {
         renderResults(step.data);
     } else {
