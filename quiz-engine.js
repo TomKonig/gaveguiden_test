@@ -261,5 +261,32 @@ export async function handleFreeText(freeText) {
     }
 }
 
+export function loadSharedState(sharedData) {
+    if (!sharedData || !sharedData.filters || !sharedData.answers) {
+        console.error("Invalid shared data provided.");
+        return { type: 'start' }; // Fallback to start screen on error
+    }
+
+    // Restore the user's profile from the shared data
+    userProfile = {
+        filters: sharedData.filters,
+        answers: sharedData.answers,
+        interests: {} // Recalculate interests from the answers
+    };
+
+    // Recalculate the interest scores based on the restored answers
+    userProfile.answers.forEach(answer => {
+        answer.tags.forEach(tag => {
+            if (!tag.includes(':')) {
+                userProfile.interests[tag] = (userProfile.interests[tag] || 0) + 1;
+            }
+        });
+    });
+
+    // We don't need to replay the quiz, just show the final results
+    // based on the restored state.
+    return { type: 'results', data: getProductScores() };
+}
+
 // Add this line at the very end of quiz-engine.js
 export function getUserProfile() { return userProfile; }
