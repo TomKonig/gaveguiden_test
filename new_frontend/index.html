@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html lang="da">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Den Rette Gave – Unified Gradient (Fix v6a)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root{
+      --brand-grad-css: linear-gradient(45deg, #FFD86B 0%, #FF5DB1 25%, #8A5CFF 50%, #5BE2FF 100%);
+      --text: #0b1020;
+      --bg: #ffffff;
+      --grid: rgba(13,15,30,.06);
+      --shadow:  0 0.6em 2em rgba(17,20,40,.10), 0 3px 10px rgba(17,20,40,.07);
+      --radius: 20px;
+      --icon-opacity: .62;
+    }
+    *{box-sizing:border-box}
+    html, body { height: 100%; }
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: var(--text); background: var(--bg); line-height: 1.55; overflow-x: hidden;
+      display:flex; flex-direction:column;
+    }
+    .page-bg{ position: fixed; inset: 0; pointer-events: none; z-index:0;
+      background:
+        radial-gradient(65% 50% at 100% 0%, rgba(99,102,241,.08), transparent 60%),
+        radial-gradient(70% 60% at 0% 100%, rgba(56,189,248,.06), transparent 60%);
+    }
+    .page-bg::after{
+      content:""; position:absolute; inset:0;
+      background-image:
+        linear-gradient(0deg, var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.8), transparent 70%);
+    }
+    #icon-layer{ position: fixed; inset: 0; width:100vw; height:100vh; pointer-events:none; z-index:0; }
+
+    .container{ width: min(1120px, 92vw); margin: 0 auto; }
+    .nav{ position:relative; z-index:3; padding: 10px 0; }
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:700; font-size:20px; text-decoration:none; }
+    .brand:focus-visible{ outline:2px solid rgba(255,216,107,.9); outline-offset:5px; border-radius:12px; }
+    .brand-title{
+      background: var(--brand-grad-css);
+      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+    .brand-mark { height: 34px; width: auto; filter: drop-shadow(0 3px 8px rgba(17,20,40,.12)); }
+    @media (max-width:520px){ .brand-mark{ height:30px; } }
+
+    .nav a{ text-decoration:none; color:#596273; font-weight:600; }
+    .nav a:hover{ color:var(--brand-grad); }
+
+    .hero-wrap{ display:flex; align-items:center; justify-content:center; min-height: 72svh; padding: clamp(18px, 6vw, 64px) 0; position:relative; z-index:1; }
+    .surface{
+      position:relative; overflow:hidden; z-index:2; text-align:center; width:min(1120px, 92vw); margin:0 auto;
+      padding: clamp(18px, 4vw, 30px) clamp(20px, 4vw, 40px);
+      background: rgba(255,255,255,.06); background-clip: padding-box;
+      -webkit-backdrop-filter: blur(24px) saturate(160%) contrast(1.0);
+      backdrop-filter: blur(24px) saturate(160%) contrast(1.0);
+      border-radius: var(--radius); border: 1px solid rgba(255,255,255,.28);
+      outline: 1px solid rgba(11,16,32,.06); outline-offset: -1px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+    .surface::before{ content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+      background: radial-gradient(120% 70% at 12% 8%, rgba(255,255,255,.32), transparent 45%);
+      mix-blend-mode: soft-light;
+    }
+
+    .eyebrow{
+      display:inline-flex; align-items:center; gap:10px; padding:8px 12px; border-radius:999px;
+      background: rgba(255,255,255,.45);
+      -webkit-backdrop-filter: blur(9px) saturate(150%); backdrop-filter: blur(9px) saturate(150%);
+      color:#4338ca; font-weight:700; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+      border:1px solid rgba(255,255,255,.72);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 3px 8px rgba(17,20,40,.06);
+      margin:0 auto 8px;
+    }
+
+    h1{ margin:14px 0 8px; font-size: clamp(32px, 5.2vw, 56px); line-height:1.2; letter-spacing:-.01em; }
+    .em-altid-wrapper { display: inline-block; background: inherit; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;}
+    .em-altid{ position:relative; display:inline-block; }
+    .em-altid .arc{ position:absolute; left:-3px; right:-3px; bottom:-0.07em; height:auto; pointer-events:none; overflow:visible; z-index:1; }
+    .em-altid .arc path{ fill:none; stroke-linecap:round; stroke-linejoin:round; opacity:.9; transition: stroke-dashoffset .6s ease-out, opacity .25s ease; }
+    .em-altid:hover .arc path{ stroke-dashoffset: 0 !important; opacity:1; }
+
+    /* Gradient for landing H1 */
+    .grad-text {
+  background: var(--brand-grad-css);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  position: relative;
+  line-height:1.35em;
+}
+
+    .lead{ font-size: clamp(15px, 2.2vw, 20px); color:#5a6472; max-width:60ch; margin:0 auto; }
+    .actions{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:26px; flex-wrap:wrap; }
+
+    .btn{ appearance:none; border:0; cursor:pointer; font-weight:800; letter-spacing:.01em;
+      padding: clamp(0.9em, 1.2vw, 1.3em) clamp(1.4em, 2.4vw, 2.8em); border-radius:16px; font-size: clamp(16px, 1.2vw, 18px);
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, box-shadow .25s ease, background-position .6s ease;
+      position: relative; isolation: isolate; color:#fff;
+    }
+    .btn:focus-visible{ outline: 2px solid rgba(255,216,107,.8); outline-offset: 3px; }
+    .btn-primary{ background: var(--brand-grad-css); background-size: 200% 200%; background-position: 100% 0; }
+    .btn-primary::after{
+      content:""; position:absolute; inset:-10px; border-radius: inherit; z-index:-1;
+      background: radial-gradient(120% 120% at 50% 50%, rgba(255,216,107,.25), rgba(138,92,255,.18) 45%, transparent 70%);
+      filter: blur(14px); opacity: 0; transition: opacity .28s ease;
+    }
+    .btn-primary:hover{ transform: translateY(-1px) scale(1.02); box-shadow: 0 12px 28px rgba(115,99,241,.18), 0 6px 16px rgba(115,99,241,.14); background-position: 0 0; }
+    .btn-primary:hover::after{ opacity: .35; }
+    @media (prefers-reduced-motion: reduce){ .btn-primary{ transition: transform .18s ease, box-shadow .25s ease; } .btn-primary:hover{ background-position: 100% 0; } }
+
+    .site-footer{ margin-top:auto; position:relative; z-index:1; border-top: 1px solid rgba(11,16,32,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.85));
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    }
+    .site-footer .inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 16px 0; font-size: 13px; color:#596273; }
+    .site-footer a{ color:#596273; text-decoration:none; }
+    .site-footer a:hover{ text-decoration:underline; }
+    .links{ display:flex; gap:16px; flex-wrap:wrap; }
+    @media (max-width:640px){ .site-footer .inner{ flex-direction:column; gap:8px; } }
+
+    body { overflow: hidden; }
+    .hero-wrap{ min-height: var(--hero-avail, 72svh); }
+  
+/* ===== Quiz mode additions (scoped to #cta) ===== */
+#cta .qz-area{display:none}
+#cta.qz-active > .eyebrow{display:inline-flex}
+#cta.qz-active > h1,
+#cta.qz-active > .lead,
+#cta.qz-active > .actions{display:none}
+#cta.qz-active .qz-area{display:block}
+
+#cta .qz-heading{
+  color:#8A5CFF;
+  font-weight:800;
+  letter-spacing:-.01em;
+  line-height:1.2;
+  margin:14px 0 8px;
+  min-height:2.8em; /* reserves space to avoid reflow between questions */
+}
+
+#cta .qz-answers{
+  margin-top: clamp(1em, 3vw, 2em);
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  min-height:160px; /* reserve space for animations */
+}
+@media(min-width:680px){
+  #cta .qz-answers{ grid-template-columns:1fr 1fr; min-height:128px; }
+}
+
+
+/* Fade out answers before backspacing */
+#cta .qz-answers.qz-fade-out .qz-pill{
+  opacity:0; transform:translateY(8px); pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
+}
+
+/* Caret for typewriter */
+.qz-caret{
+  display:inline-block;
+  width:.07em; height:.9em;
+  background:currentColor;
+  vertical-align:-.06em; margin-left:.06em;
+  animation:qz-blink 1s steps(1, end) infinite;
+}
+@keyframes qz-blink{
+  0%,49%{opacity:1}
+  50%,100%{opacity:0}
+}
+
+#cta .qz-pill{
+  color:#8A5CFF; /* default text color */
+  --ring: 2px;
+  position:relative; display:flex; align-items:center; justify-content:center;
+  padding: clamp(0.8em, 1.2vw, 1.1em) clamp(1.2em, 2vw, 2.2em); border-radius:999px; font-weight:800; cursor:pointer;
+  border: var(--ring) solid transparent;
+  background:
+    linear-gradient(rgba(255,255,255,.62), rgba(255,255,255,.62)) padding-box,
+    var(--brand-grad-css) border-box;
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+          backdrop-filter: blur(10px) saturate(150%);
+  transition: transform .16s ease, box-shadow .2s ease, color .2s ease, opacity .25s ease;
+  overflow:hidden;
+}
+
+#cta .qz-pill > span{ 
+  position:relative; 
+  z-index:1; 
+  font-size:1.4em; 
+  line-height:1.6em; 
+  color:inherit;
+  text-align:center;
+  text-decoration:none;
+  transition: color .2s ease;}
+
+#cta .qz-pill:hover{
+  background:
+    var(--brand-grad-css) padding-box,
+    var(--brand-grad-css) border-box;
+    transition: color .2s ease;
+}
+
+/* Frost band for better label contrast over gradient fills */
+#cta .qz-pill::before{
+  content:"";
+  position:absolute;
+  inset: calc(var(--ring) + 2px);
+  border-radius: inherit;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(120% 180% at 50% 55%,
+      rgba(255,255,255,.78) 0%,
+      rgba(255,255,255,.46) 36%,
+      rgba(255,255,255,.12) 65%,
+      rgba(255,255,255,0) 76%);
+  backdrop-filter: blur(2px) saturate(130%);
+  -webkit-backdrop-filter: blur(2px) saturate(130%);
+}
+
+/* Remove frosting on selected pill */
+#cta .qz-pill.qz-selected::before{ display:none; }
+
+/* Selected -> full gradient fill */
+#cta .qz-pill.qz-selected,
+#cta .qz-pill.qz-selected:hover{
+  color:#fff;
+  border-color: transparent;
+  background:
+    var(--brand-grad-css) padding-box,
+    var(--brand-grad-css) border-box;
+}
+
+#arc-path {
+  stroke: url(#arcStroke);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16 12;
+  stroke-dashoffset: 0;
+  opacity: 0.9;
+  animation: swipe-stroke 1s linear infinite;
+}
+
+
+@keyframes swipe-stroke {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -28; }
+}
+</style></head>
+<body>
+<div aria-hidden="true" class="page-bg"></div>
+<svg id="defs" style="position:absolute;width:0;height:0" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient color-interpolation="sRGB" gradienttransform="rotate(45 134 183.5)" gradientunits="userSpaceOnUse" id="brandGrad" x1="-30" x2="268" y1="183.5" y2="183.5">
+<stop offset="0%" stop-color="#FFD86B"></stop>
+<stop offset="25%" stop-color="#FF5DB1"></stop>
+<stop offset="50%" stop-color="#8A5CFF"></stop>
+<stop offset="100%" stop-color="#5BE2FF"></stop>
+</lineargradient>
+</defs>
+</svg>
+<svg aria-hidden="true" id="icon-layer" preserveaspectratio="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="i-gift" viewbox="0 0 24 24">
+<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+<rect height="13" rx="2" width="18" x="3" y="8"></rect>
+<path d="M12 8v13M3 12h18"></path>
+<path d="M7.5 6.5a2.5 2.5 0 1 1 5 0v1.5H10c-1.4 0-2.5-1.1-2.5-2.5Z"></path>
+<path d="M16.5 6.5a2.5 2.5 0 1 0-5 0v1.5H14c1.4 0 2.5-1.1 2.5-2.5Z"></path>
+</g>
+</symbol>
+<symbol id="i-sparkle" viewbox="0 0 24 24">
+<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+<path d="M12 3l1.6 4.8L18 9.3l-4.4 1.6L12 16l-1.6-5.1L6 9.3l4.4-1.6L12 3Z"></path>
+</g>
+</symbol>
+<symbol id="i-heart" viewbox="0 0 24 24">
+<path d="M12 20s-7-4.7-7-9.2A4.8 4.8 0 0 1 9.7 6c1.1 0 2.2.5 3 1.3A4.3 4.3 0 0 1 15.7 6 4.8 4.8 0 0 1 19 10.8C19 15.3 12 20 12 20z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</symbol>
+<symbol id="i-star" viewbox="0 0 24 24">
+<path d="M12 3l2.4 5 5.6.6-4.2 3.9 1.2 5.5L12 15.8 6.9 18l1.2-5.5L3.9 8.6 9.6 8z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</symbol>
+</defs>
+</svg>
+<header aria-label="Top navigation" class="nav"><div class="container">
+<div class="nav-surface" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(18px, 3vw, 28px);border-radius:16px;background:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(14px) saturate(140%) contrast(1.0);backdrop-filter:blur(14px) saturate(140%) contrast(1.0);border:1px solid rgba(255,255,255,.6);outline:1px solid rgba(11,16,32,.06);outline-offset:-1px;box-shadow:0 6px 18px rgba(17,20,40,.08), inset 0 1px 0 rgba(255,255,255,.55)">
+<a aria-label="Til forsiden" class="brand" href="index.html">
+<svg aria-hidden="true" class="brand-mark" viewbox="0 0 268 367" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M71.355 0.97897C55.269 4.39697 43.207 18.515 42.216 35.085C41.192 52.195 49.238 65.227 66.649 74.662L74.33 78.824L52.915 79.209C33.482 79.559 30.965 79.806 25.715 81.882C18.563 84.711 9.44802 92.924 5.58502 100.021C0.699015 108.999 0.0240152 113.535 0.0160152 137.5C0.00801516 157.726 0.168016 159.764 2.00102 162.77C3.09802 164.569 5.23402 166.573 6.74802 167.223C8.26102 167.873 9.63802 168.49 9.80702 168.593C9.97602 168.697 10.135 186.337 10.16 207.795C10.201 243.219 10.384 247.484 12.156 254.154C18.548 278.22 38.872 293 65.571 293H72.774L73.163 299.88C73.472 305.35 74.167 307.758 76.552 311.63C79.424 316.293 79.494 316.67 78.19 320.5C74.027 332.72 82.385 348.27 95.5 352.71C97.15 353.268 100.046 355.17 101.935 356.937C109.3 363.822 118.329 366.385 135 366.323C150.582 366.265 157.235 364.276 166 357.052C168.475 355.012 171.995 352.828 173.822 352.198C185.927 348.027 193.404 333.605 190.154 320.699C189.121 316.597 189.26 315.876 192.077 310.675C194.45 306.294 195.131 303.753 195.198 299.035L195.283 293L202.892 292.965C225.7 292.86 244.126 281.996 252.424 263.762C257.565 252.462 257.963 248.292 257.859 206.701C257.807 185.911 257.93 168.79 258.133 168.653C258.335 168.517 259.739 167.873 261.252 167.223C262.766 166.573 264.902 164.569 265.999 162.77C267.825 159.775 267.993 157.715 267.996 138.299C267.998 126.616 267.502 114.719 266.891 111.799C264.27 99.271 253.662 86.376 242.285 81.888C237.09 79.839 234.256 79.548 214.5 79.038C195.28 78.542 192.879 78.306 195.5 77.172C208.808 71.414 217.368 64.06 222.211 54.222C225.266 48.017 226.935 46.62 226.935 37.311C226.935 28.524 225.169 26.794 222.812 21.764C211.752 -1.83503 180.588 -6.94303 160.184 11.499C151.434 19.408 142.793 34.185 136.933 51.261C134.802 57.471 133 59.934 133 56.638C133 54.726 127.773 42.266 122.925 32.622C115.315 17.482 105.401 7.16397 94.569 3.11197C88.091 0.687973 77.364 -0.29703 71.355 0.97897ZM74.12 19.153C69.271 20.547 66.59 22.541 63.425 27.108C61.13 30.42 60.638 32.203 60.61 37.311C60.573 44.283 62.085 47.874 67.178 52.901C72.504 58.158 84.243 63.301 97 65.965C100.025 66.597 104.419 67.538 106.764 68.057C109.11 68.576 112.606 69 114.533 69C117.85 69 118.003 68.852 117.379 66.25C113.91 51.789 102.889 31.485 94.704 24.479C90.887 21.212 82.732 17.88 79.068 18.09C78.206 18.14 75.979 18.618 74.12 19.153ZM182.718 19.437C176.636 21.607 172.193 25.089 167.328 31.5C161.007 39.827 152.775 56.932 150.603 66.25C150.025 68.731 150.227 69 152.671 69C155.595 69 165.05 67.413 171.5 65.84C195.293 60.037 205.988 52.663 207.592 40.956C208.919 31.277 203.045 21.494 194.477 19.115C189.421 17.712 187.399 17.767 182.718 19.437ZM30.5 100.19C25.554 102.789 23.335 105.217 20.621 111C18.781 114.922 18.466 117.72 18.172 132.769L17.834 150.037L41.063 149.769L64.292 149.5L65.727 144.575C73.514 117.861 108.563 106.734 130.249 124.092L133.998 127.093L138.597 123.582C156.748 109.722 183.771 114.52 196.962 133.944C199.094 137.083 201.484 141.867 202.273 144.576L203.708 149.5L226.935 149.769L250.163 150.037L249.831 132.269C249.562 117.824 249.173 113.845 247.751 111C245.163 105.819 242.009 102.546 237.29 100.144L233.08 98L133.79 98.044C34.872 98.088 34.485 98.096 30.5 100.19ZM100.5 134.881C88.556 138.004 82 146.508 82 158.877C82 170.636 83.071 172.185 109.96 199.31L133.939 223.5L157.54 200C184.655 173.001 186 171.087 186 159.493C186 150.943 183.918 145.594 178.69 140.71C173.622 135.977 170.081 134.632 162.5 134.563C154.103 134.487 149.762 136.617 143.24 144.014C136.639 151.501 131.749 151.597 125.673 144.358C118.968 136.369 109.065 132.641 100.5 134.881ZM29 208.439C29 246.531 29.119 249.242 31.008 254.292C33.482 260.904 40.044 267.951 47.186 271.665L52.5 274.428L88.75 274.816L125 275.205V257.54V239.875L99.887 214.688C73.771 188.494 69.295 183.103 66.079 173.965L64.155 168.5L46.578 168.227L29 167.954V208.439ZM203.689 168.644C203.31 169.023 203 170.17 203 171.192C203 172.214 201.371 176.301 199.379 180.275C196.177 186.664 192.706 190.567 169.384 214L143.01 240.5L143.005 257.836L143 275.171L179.25 274.827L215.5 274.483L221.352 271.529C227.574 268.389 233.703 262.254 236.494 256.371C239.435 250.174 240.038 240.515 239.765 204L239.5 168.5L221.939 168.228C212.28 168.078 204.068 168.265 203.689 168.644ZM91.211 294.189C89.377 296.023 89.761 301.483 91.911 304.139L93.822 306.5L133.234 306.783C172.232 307.063 172.676 307.043 175.374 304.921C177.75 303.052 178.062 302.179 177.8 298.138L177.5 293.5L134.961 293.239C102.708 293.042 92.128 293.272 91.211 294.189ZM95.25 324.662C92.888 325.615 93.845 330.998 96.923 334.077L99.846 337H133.846H167.847L170.805 334.511C172.432 333.142 173.984 330.867 174.253 329.455C175.294 324.011 175.16 323.993 134.179 324.079C113.455 324.122 95.938 324.385 95.25 324.662Z" fill="url(#brandGrad)" fill-rule="evenodd" stroke="none"></path>
+</svg>
+<span class="brand-title">Den Rette Gave</span>
+</a>
+<nav><a href="#cta">Sådan fungerer det</a></nav>
+</div>
+</div></header>
+<main class="hero-wrap">
+<section class="surface" id="cta">
+<div class="eyebrow">Intelligent gaveguide</div>
+<h1 class="grad-text" id="hero-title">Gaven, der altid rammer plet.</h1>
+<p class="lead">Stop med at gætte. Vores intelligente guide finder den perfekte gave baseret på personlighed og interesser.</p>
+<div class="actions"><button class="btn btn-primary">Tag quizzen nu</button></div>
+<div aria-live="polite" class="qz-area"><h1 class="qz-heading" id="qzText"></h1><div class="qz-answers" id="qzAnswers"></div></div></section>
+</main>
+<footer class="site-footer">
+<div class="container inner">
+<div class="links">
+<a href="#">Vilkår &amp; Betingelser</a>
+<a href="#">Docs</a>
+<a href="#">Privatlivspolitik</a>
+</div>
+<div class="copy">© <span id="year"></span> Intelfy. Alle rettigheder forbeholdes.</div>
+</div>
+</footer>
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    (function(){
+      const docEl = document.documentElement;
+      const header = document.querySelector('.nav');
+      const footer = document.querySelector('.site-footer');
+      function setHeroHeight(){
+        const vp = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const h = Math.max(320, Math.round(vp - (header?.offsetHeight||0) - (footer?.offsetHeight||0) - 1));
+        docEl.style.setProperty('--hero-avail', h + 'px');
+      }
+      addEventListener('resize', setHeroHeight);
+      addEventListener('orientationchange', setHeroHeight);
+      addEventListener('DOMContentLoaded', setHeroHeight);
+      setHeroHeight();
+    })();
+  </script>
+<script>
+(function(){
+  function drawArcUnderWord(word, containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+
+    const textNode = [...container.childNodes].find(n => n.nodeType === Node.TEXT_NODE && n.textContent.includes(word));
+    if (!textNode) return;
+
+    const range = document.createRange();
+    const start = textNode.textContent.indexOf(word);
+    range.setStart(textNode, start);
+    range.setEnd(textNode, start + word.length);
+
+    const rect = range.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const relX = rect.left - containerRect.left;
+    const relY = rect.bottom - containerRect.top;
+
+    const width = rect.width;
+    const height = 12;
+
+    const fontSize = parseFloat(getComputedStyle(container).fontSize);
+
+    let svg = document.getElementById("arc-svg");
+    let path = document.getElementById("arc-path");
+
+    if (!svg) {
+      svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.id = "arc-svg";
+      svg.style.position = "absolute";
+      svg.style.pointerEvents = "none";
+      svg.style.zIndex = "1";
+      svg.style.overflow = "visible";
+
+      const defs = document.createElementNS(svg.namespaceURI, "defs");
+      const grad = document.createElementNS(svg.namespaceURI, "linearGradient");
+      grad.id = "arcStroke";
+      grad.setAttribute("gradientTransform", "rotate(45 .5 .5)");
+      const stops = [
+        ["0%", "#FFD86B"],
+        ["25%", "#FF5DB1"],
+        ["50%", "#8A5CFF"],
+        ["100%", "#5BE2FF"]
+      ];
+      for (const [offset, color] of stops) {
+        const stop = document.createElementNS(svg.namespaceURI, "stop");
+        stop.setAttribute("offset", offset);
+        stop.setAttribute("stop-color", color);
+        grad.appendChild(stop);
+      }
+      defs.appendChild(grad);
+      svg.appendChild(defs);
+
+      path = document.createElementNS(svg.namespaceURI, "path");
+      path.id = "arc-path";
+      path.setAttribute("stroke", "url(#arcStroke)");
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      path.setAttribute("stroke-dasharray", "6 10");
+      path.setAttribute("stroke-dashoffset", "16");
+      path.setAttribute("opacity", "0.9");
+
+      svg.appendChild(path);
+      container.appendChild(svg);
+    }
+
+    svg.setAttribute("width", width + 6);
+    svg.setAttribute("height", height);
+    svg.style.left = (relX - 3) + "px";
+    svg.style.top = (relY - 0.08 * fontSize) + "px";
+
+    const y = Math.round(height - 0.25 * fontSize);
+    const a = Math.max(5, width * 0.18);
+    const b = Math.max(5, width * 0.52);
+    path.setAttribute("d", `M 2 ${y} C ${a} ${y+4}, ${b} ${y-6}, ${width - 2} ${y}`);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    drawArcUnderWord("altid", "#hero-title");
+  });
+  window.addEventListener("resize", () => {
+    drawArcUnderWord("altid", "#hero-title");
+  });
+})();
+
+(function(){
+  const cta = document.getElementById('cta');
+  const btn = cta.querySelector('.actions .btn, .actions button');
+  const eyebrow = cta.querySelector('.eyebrow');
+  const qWrap = cta.querySelector('.qz-area');
+  const qText = cta.querySelector('#qzText');
+  const qAns  = cta.querySelector('#qzAnswers');
+  if(!btn || !qWrap) return;
+
+  const QUESTIONS = [
+    { q: 'Hvem skal forkæles?', a: ['Min partner','En forælder','En søskende','En ven/kollega'] },
+    { q: 'Hvad er cirka budgettet?', a: ['Under 250 kr.','250–500 kr.','500–1.000 kr.','1.000+ kr.'] }
+  ];
+
+  function setEyebrow(i){
+    if(eyebrow){ eyebrow.textContent = 'Spørgsmål ' + (i+1); }
+  }
+  function caret(on){
+    if(on){
+      if(!qText.querySelector('.qz-caret')){
+        const c=document.createElement('span'); c.className='qz-caret'; qText.appendChild(c);
+      }
+    }else{
+      const c=qText.querySelector('.qz-caret'); c && c.remove();
+    }
+  }
+  function typeIn(text, speed){
+    return new Promise(resolve=>{
+      qText.textContent = '';
+      let i=0;
+      (function step(){
+        if(i<text.length){
+          qText.textContent += text[i++];
+          setTimeout(step, speed);
+        } else {
+          caret(true);
+          resolve();
+        }
+      })();
+    });
+  }
+  function backspaceAll(speed){
+    return new Promise(resolve=>{
+      caret(false);
+      (function step(){
+        const t = qText.textContent;
+        if(t.length){
+          qText.textContent = t.slice(0,-1);
+          setTimeout(step, speed);
+        } else {
+          resolve();
+        }
+      })();
+    });
+  }
+
+  function showAnswers(list){
+    qAns.classList.remove('qz-fade-out');
+    qAns.innerHTML='';
+    list.forEach((label, i)=>{
+      const b = document.createElement('button');
+      b.type='button'; b.className='qz-pill'; b.innerHTML = '<span>'+label+'</span>';
+      b.style.opacity='0'; b.style.transform='translateY(6px)';
+      b.addEventListener('click', ()=> onSelect(b));
+      qAns.appendChild(b);
+      setTimeout(()=>{
+        b.style.transition='opacity .35s ease, transform .35s ease';
+        b.style.opacity='1'; b.style.transform='translateY(0)';
+      }, 100*i + 120);
+    });
+  }
+
+  async function onSelect(btn){
+    Array.from(qAns.children).forEach(b => b.classList.toggle('qz-selected', b===btn));
+    qAns.classList.add('qz-fade-out');
+    await backspaceAll(22);
+    next();
+  }
+
+  let index = 0;
+  async function next(){
+    if(index >= QUESTIONS.length){
+      caret(false);
+      qText.textContent = 'Tak! Vi finder gaver til dig …';
+      qAns.innerHTML='';
+      return;
+    }
+    const {q, a} = QUESTIONS[index++];
+    setEyebrow(index-1);
+    await typeIn(q, 48);    // slightly slower typing
+    showAnswers(a);
+  }
+
+  btn.addEventListener('click', ()=>{
+    cta.classList.add('qz-active');
+    qWrap.style.display='block';
+    index = 0;
+    next();
+  }, {once:true});
+})();
+</script>
+<script>
+    (function(){
+      const ICONS = Array.from({ length: 19 }, (_, i) => i + 1);
+      const COLORS = ["#FFD86B","#FF5DB1","#8A5CFF","#5BE2FF"];
+      const layer = document.getElementById('icon-layer');
+      const svgNS = "http://www.w3.org/2000/svg";
+      const CFG = { count: 7, minSize: 42, maxSize: 60, speed: 10, turnMax: 0.35, noise: 0.18, sepPad: 6, off: 80, fadeMs: 700 };
+      const icons = [];
+      let VW = innerWidth, VH = innerHeight;
+      function resize(){ VW = Math.max(1, innerWidth); VH = Math.max(1, innerHeight); layer.setAttribute('viewBox', `0 0 ${VW} ${VH}`); }
+      addEventListener('resize', resize); addEventListener('orientationchange', resize); resize();
+      const rand = (a,b)=> a + Math.random()*(b-a); const pick = a => a[Math.floor(Math.random()*a.length)];
+      
+  async function fromSymbol(name, color) {
+    const g = document.createElementNS(svgNS, 'g');
+    try {
+      const res = await fetch(`icons/${name}.svg`);
+      const svgText = await res.text();
+      const temp = document.createElement('div');
+      temp.innerHTML = svgText;
+      const fetchedSvg = temp.querySelector('svg');
+      if (fetchedSvg) {
+        for (const child of fetchedSvg.children) {
+          const clone = child.cloneNode(true);
+          clone.setAttribute('stroke', color);
+          clone.setAttribute('fill', color);
+          g.appendChild(clone);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load /icons/" + name + ".svg", e);
+    }
+    return g;
+  }
+
+  async function spawnIcons() {
+    for (let i = 0; i < CFG.count; i++) {
+      const name = pick(ICONS);
+      const color = pick(COLORS);
+      const g = await fromSymbol(name, color);
+      const svg = document.createElementNS(svgNS, 'svg');
+      const size = rand(CFG.minSize, CFG.maxSize);
+      svg.setAttribute('width', size);
+      svg.setAttribute('height', size);
+      svg.appendChild(g);
+      layer.appendChild(svg);
+      icons.push(svg);
+    }
+  }
+  spawnIcons();
+  
+})();                  <!-- close the IIFE -->
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "gaveguiden",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "tsc --project tsconfig.json lib/thompsonSampling.ts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "@xenova/transformers": "^2.17.1",
+    "mathjs": "^12.4.2",
+    "@octokit/rest": "^20.0.1",
+    "cookie": "^0.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.5.0",
+    "node-fetch": "^3.3.2",
+    "jstat": "^1.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

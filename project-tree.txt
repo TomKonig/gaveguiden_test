@@ -1,0 +1,50 @@
+GaveGuiden/
+├── admin.html
+├── assets/
+│   ├── banners.md
+│   ├── favicon.ico
+│   ├── flags.json
+│   ├── interests.json
+│   ├── logo.jpeg
+│   ├── products.json
+│   ├── questions.json
+│   ├── ratings.json
+│   ├── shares.json
+│   └── standardization.json
+├── Comprehensive SEO Strategy for denrettegave.dk.md
+├── functions/
+│   ├── admin-login.js
+│   ├── admin-logout.js
+│   ├── check-auth.js
+│   ├── create-share-link.js
+│   ├── generate-ai-question.js
+│   ├── generate-question-batch.js
+│   ├── get-flags.js
+│   ├── get-ratings.js
+│   ├── get-shared-result.js
+│   ├── interpret-freetext.js
+│   ├── resolve-flag.js
+│   ├── submit-flag.js
+│   ├── submit-rating.js
+│   ├── update-analytics.js
+│   ├── update-products.js
+│   └── utils/
+│       ├── auth-middleware.js
+│       └── mongodb-client.js
+├── index.html
+├── jest.config.js
+├── masterprompts.md
+├── netlify.toml
+├── package-lock.json
+├── package.json
+├── privacy-policy.html
+├── quiz-logic.js
+├── quizLogic.md
+├── readme.md
+├── robots.txt
+├── seostrategy.md
+├── sitemap.xml
+├── style.css
+├── terms-of-service.html
+└── tests/
+    └── admin-login.test.js

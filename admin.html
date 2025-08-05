@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Den Rette Gave</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="h-full">
+    <!-- Login View -->
+    <div id="login-view" class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Admin Login</h2>
+            </div>
+            <div class="mt-8 space-y-6">
+                <div>
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" name="password" type="password" required class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="Password">
+                </div>
+                <div>
+                    <button id="login-button" class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        Sign in
+                    </button>
+                </div>
+                <p id="login-error" class="mt-2 text-center text-sm text-red-600 hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin View -->
+    <div id="admin-view" class="hidden">
+        <div class="min-h-full">
+            <div class="bg-gray-800 pb-32">
+                <header class="py-10">
+                    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                        <h1 class="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h1>
+                        <button id="logout-button" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-400">Log Out</button>
+                    </div>
+                </header>
+            </div>
+
+            <main class="-mt-32">
+                <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+                    <div class="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
+                        <!-- TABS -->
+                        <div class="border-b border-gray-200">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <button data-tab="live-editor" class="tab border-indigo-500 text-indigo-600 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Live Editor</button>
+                                <button data-tab="edit-product" class="tab border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Edit Product</button>
+                                <button data-tab="flagged-items" class="tab border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Flagged Items</button>
+                                <button data-tab="ratings" class="tab border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Ratings</button>
+                                <button data-tab="settings" class="tab border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">Settings</button>
+                            </nav>
+                        </div>
+                        <!-- TAB CONTENT -->
+                        <div class="py-6">
+                            <!-- Live Editor Content -->
+                            <div id="live-editor-content" class="tab-content">
+                                <h3 class="text-lg font-medium leading-6 text-gray-900">Edit `products.json` directly</h3>
+                                <div class="mt-4">
+                                    <textarea id="json-editor" rows="20" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"></textarea>
+                                </div>
+                                <div class="mt-4 flex justify-end">
+                                    <span id="save-status" class="text-sm font-medium mr-4 self-center hidden"></span>
+                                    <button id="save-github-button" type="button" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Save to GitHub</button>
+                                </div>
+                            </div>
+
+                            <!-- Edit Product Content -->
+                            <div id="edit-product-content" class="tab-content hidden">
+                                <select id="product-selector" class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"></select>
+                                <form id="edit-form" class="hidden mt-4 space-y-4">
+                                    <input type="text" id="edit-id" readonly class="bg-gray-100 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="ID">
+                                    <input type="text" id="edit-name" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Name">
+                                    <textarea id="edit-description" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Description"></textarea>
+                                    <input type="number" id="edit-price" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Price">
+                                    <input type="text" id="edit-url" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="URL">
+                                    <input type="text" id="edit-image" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Image URL">
+                                    <input type="text" id="edit-tags" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Tags (comma-separated)">
+                                    <input type="text" id="edit-differentiator_tags" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Differentiator Tags (comma-separated)">
+                                    <select id="edit-status" class="block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                    <button id="save-edit-button" type="button" class="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">Apply Changes to Live Editor</button>
+                                </form>
+                            </div>
+
+                            <!-- Flagged Items Content -->
+                            <div id="flagged-items-content" class="tab-content hidden">
+                                <div id="flags-loading">Loading flagged items...</div>
+                                <div id="flags-error" class="text-red-500 hidden">Error loading flags. Please try again.</div>
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Product</th>
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Reason</th>
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Count</th>
+                                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6"><span class="sr-only">Resolve</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="flags-table-body" class="divide-y divide-gray-200 bg-white">
+                                        <!-- Rows will be inserted here by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Ratings Content -->
+                            <div id="ratings-content" class="tab-content hidden">
+                                <div id="ratings-content-body" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    Loading ratings...
+                                </div>
+                            </div>
+                            
+                            <!-- Settings Content -->
+                            <div id="settings-content" class="tab-content hidden">
+                                <h3 class="text-lg font-medium leading-6 text-gray-900">Settings</h3>
+                                <p class="mt-2 text-sm text-gray-600">To change the admin password, you must update the `ADMIN_PASSWORD` environment variable in the Netlify project settings. The site will need to be redeployed for the change to take effect.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+    // --- DOM elements ---
+    const loginView = document.getElementById('login-view');
+    const adminView = document.getElementById('admin-view');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    const logoutButton = document.getElementById('logout-button');
+    const loginError = document.getElementById('login-error');
+    const jsonEditor = document.getElementById('json-editor');
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const productSelector = document.getElementById('product-selector');
+    const editForm = document.getElementById('edit-form');
+    const saveGitHubButton = document.getElementById('save-github-button');
+    const saveStatus = document.getElementById('save-status');
+    const flagsTableBody = document.getElementById('flags-table-body');
+
+    // --- NEW COOKIE-BASED AUTH FLOW ---
+    async function checkAuthentication() {
+        try {
+            const response = await fetch('/api/check-auth');
+            if (response.ok) {
+                showAdminPanel();
+            } else {
+                showLoginPanel();
+            }
+        } catch (error) {
+            console.error('Authentication check failed:', error);
+            showLoginPanel();
+        }
+    }
+
+    function showAdminPanel() {
+        loginView.classList.add('hidden');
+        adminView.classList.remove('hidden');
+        loadAdminData();
+    }
+
+    function showLoginPanel() {
+        loginView.classList.remove('hidden');
+        adminView.classList.add('hidden');
+    }
+
+    loginButton.addEventListener('click', async () => {
+        const password = passwordInput.value;
+        loginError.classList.add('hidden');
+        try {
+            const response = await fetch('/api/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (!response.ok) throw new Error('Login failed');
+            showAdminPanel();
+        } catch (error) {
+            loginError.textContent = 'Invalid password.';
+            loginError.classList.remove('hidden');
+        }
+    });
+
+    logoutButton.addEventListener('click', async () => {
+        await fetch('/api/admin-logout');
+        showLoginPanel();
+    });
+
+    document.addEventListener('DOMContentLoaded', checkAuthentication);
+
+    // --- CORE ADMIN FUNCTIONS ---
+    async function loadAdminData() {
+        loadLiveEditor();
+        loadFlags();
+        loadRatings();
+    }
+
+    async function loadLiveEditor() {
+        try {
+            const response = await fetch(`../assets/products.json?v=${new Date().getTime()}`);
+            const products = await response.json();
+            jsonEditor.value = JSON.stringify(products, null, 2);
+            populateProductSelector(products);
+        } catch (error) {
+            console.error('Error loading products.json:', error);
+            jsonEditor.value = 'Error loading products.json.';
+        }
+    }
+
+    saveGitHubButton.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to save these changes directly to the live site?')) {
+            return;
+        }
+        saveStatus.classList.remove('hidden', 'text-green-600', 'text-red-600');
+        saveStatus.textContent = 'Saving to GitHub...';
+        saveGitHubButton.disabled = true;
+        
+        const content = jsonEditor.value;
+        try {
+            JSON.parse(content);
+            const response = await fetch('/api/update-products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to save.');
+            }
+            const result = await response.json();
+            saveStatus.textContent = result.message;
+            saveStatus.classList.add('text-green-600');
+        } catch (error) {
+            saveStatus.textContent = `Error: ${error.message}`;
+            saveStatus.classList.add('text-red-600');
+        } finally {
+            saveGitHubButton.disabled = false;
+        }
+    });
+
+    async function loadFlags() {
+        const flagsLoading = document.getElementById('flags-loading');
+        const flagsError = document.getElementById('flags-error');
+        flagsLoading.classList.remove('hidden');
+        flagsError.classList.add('hidden');
+        flagsTableBody.innerHTML = '';
+
+        try {
+            const [flagsResponse, productsResponse] = await Promise.all([
+                fetch('/api/get-flags'),
+                fetch(`../assets/products.json?v=${new Date().getTime()}`)
+            ]);
+            
+            if (!flagsResponse.ok) throw new Error(`Failed to fetch flags. Status: ${flagsResponse.status}`);
+            
+            const flags = await flagsResponse.json();
+            const products = await productsResponse.json();
+            const productMap = products.reduce((acc, p) => ({ ...acc, [p.id]: p.name }), {});
+
+            const flagGroups = flags.reduce((acc, flag) => {
+                const key = `${flag.productId}::${flag.reason}`;
+                if (!acc[key]) {
+                    acc[key] = { productId: flag.productId, reason: flag.reason, count: 0 };
+                }
+                acc[key].count++;
+                return acc;
+            }, {});
+
+            Object.values(flagGroups).forEach(group => {
+                const productName = productMap[group.productId] || 'Unknown Product';
+                const row = flagsTableBody.insertRow();
+                
+                row.insertCell().textContent = productName;
+                row.insertCell().textContent = group.reason;
+                row.insertCell().textContent = group.count;
+
+                const actionCell = row.insertCell();
+                actionCell.className = 'text-right pr-6';
+                const resolveButton = document.createElement('button');
+                resolveButton.className = 'text-indigo-600 hover:text-indigo-900 resolve-btn';
+                resolveButton.textContent = 'Resolve';
+                resolveButton.dataset.productId = group.productId;
+                resolveButton.dataset.reason = group.reason;
+                actionCell.appendChild(resolveButton);
+            });
+
+        } catch (error) {
+            console.error('Error loading flags:', error);
+            flagsError.classList.remove('hidden');
+        } finally {
+            flagsLoading.classList.add('hidden');
+        }
+    }
+
+    flagsTableBody.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('resolve-btn')) {
+            const button = event.target;
+            const { productId, reason } = button.dataset;
+            if (!confirm(`Are you sure you want to resolve all "${reason}" flags for this product?`)) return;
+            
+            button.textContent = 'Resolving...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/api/resolve-flag', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, reason })
+                });
+                if (!response.ok) throw new Error('Failed to resolve flags.');
+                button.closest('tr').remove();
+            } catch (error) {
+                console.error('Resolve flag error:', error);
+                alert('An error occurred. Please try again.');
+                button.textContent = 'Resolve';
+                button.disabled = false;
+            }
+        }
+    });
+    
+    // Helper function to prevent XSS
+    function escapeHTML(str) {
+        const p = document.createElement('p');
+        p.textContent = str;
+        return p.innerHTML;
+    }
+
+    async function loadRatings() {
+        const ratingsContent = document.getElementById('ratings-content-body');
+        ratingsContent.textContent = 'Loading ratings...';
+        try {
+            const response = await fetch('/api/get-ratings');
+            if (!response.ok) throw new Error('Failed to fetch ratings');
+            const ratings = await response.json();
+            const productsResponse = await fetch(`../assets/products.json?v=${new Date().getTime()}`);
+            const products = await productsResponse.json();
+            const productMap = products.reduce((acc, p) => ({ ...acc, [p.id]: p.name }), {});
+
+            const averageRatings = ratings.reduce((acc, rating) => {
+                if (!acc[rating.productId]) {
+                    acc[rating.productId] = { total: 0, count: 0 };
+                }
+                acc[rating.productId].total += rating.rating;
+                acc[rating.productId].count += 1;
+                return acc;
+            }, {});
+            
+            ratingsContent.innerHTML = '';
+            if (Object.keys(averageRatings).length === 0) {
+                ratingsContent.textContent = 'No ratings submitted yet.';
+            } else {
+                for (const productId in averageRatings) {
+                    const avg = (averageRatings[productId].total / averageRatings[productId].count).toFixed(2);
+                    const productName = productMap[productId] || 'Unknown Product';
+                    const div = document.createElement('div');
+                    div.className = 'p-4 border rounded-lg';
+                    // Use innerHTML here but with escaped data
+                    div.innerHTML = `<h4 class="font-semibold">${escapeHTML(productName)}</h4><p>Average Rating: ${avg} / 5</p><p>Based on ${averageRatings[productId].count} ratings.</p>`;
+                    ratingsContent.appendChild(div);
+                }
+            }
+        } catch(e) {
+            ratingsContent.textContent = `Error loading ratings. ${e.message}`;
+        }
+    }
+
+    function populateProductSelector(products) {
+        productSelector.innerHTML = '<option value="">Select a product to edit...</option>';
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = product.name;
+            productSelector.appendChild(option);
+        });
+    }
+
+    productSelector.addEventListener('change', async (e) => {
+        const productId = e.target.value;
+        if (!productId) {
+            editForm.classList.add('hidden');
+            return;
+        }
+        const response = await fetch(`../assets/products.json?v=${new Date().getTime()}`);
+        const products = await response.json();
+        const product = products.find(p => p.id === productId);
+
+        if (product) {
+            document.getElementById('edit-id').value = product.id;
+            document.getElementById('edit-name').value = product.name;
+            document.getElementById('edit-description').value = product.description;
+            document.getElementById('edit-price').value = product.price;
+            document.getElementById('edit-url').value = product.url;
+            document.getElementById('edit-image').value = product.image;
+            document.getElementById('edit-tags').value = product.tags.join(', ');
+            document.getElementById('edit-differentiator_tags').value = product.differentiator_tags ? product.differentiator_tags.join(', ') : '';
+            document.getElementById('edit-status').value = product.status;
+            editForm.classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('save-edit-button').addEventListener('click', () => {
+        const productId = document.getElementById('edit-id').value;
+        const products = JSON.parse(jsonEditor.value);
+        const productIndex = products.findIndex(p => p.id === productId);
+
+        if (productIndex > -1) {
+            products[productIndex] = {
+                id: document.getElementById('edit-id').value,
+                name: document.getElementById('edit-name').value,
+                description: document.getElementById('edit-description').value,
+                price: parseFloat(document.getElementById('edit-price').value),
+                url: document.getElementById('edit-url').value,
+                image: document.getElementById('edit-image').value,
+                tags: document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+                differentiator_tags: document.getElementById('edit-differentiator_tags').value.split(',').map(t => t.trim()).filter(Boolean),
+                status: document.getElementById('edit-status').value,
+            };
+            jsonEditor.value = JSON.stringify(products, null, 2);
+            document.querySelector('.tab[data-tab="live-editor"]').click();
+            alert('Changes applied to the Live Editor. Review them and click "Save to GitHub" to make them live.');
+        }
+    });
+</script>
+</body>
+</html>
