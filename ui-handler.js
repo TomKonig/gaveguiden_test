@@ -55,12 +55,35 @@ function setupDOMElements() {
     copyFeedback = document.getElementById('copy-feedback');
 }
 
+// REPLACE the existing attachEventListeners function with this one.
+
 function attachEventListeners() {
     document.querySelectorAll('.start-quiz-btn').forEach(btn => btn.addEventListener('click', runQuiz));
     restartButton.addEventListener('click', runQuiz);
     backButton.addEventListener('click', goBack);
-    earlyExitButton.addEventListener('click', () => renderStep({ type: 'results', data: getProductScores() }));
-    // Other event listeners from your original file can be added here
+    
+    // --- NEW: Re-implemented the Early Exit button logic ---
+    earlyExitButton.addEventListener('click', () => {
+        // This directly calls the results step, skipping any remaining questions.
+        renderStep({ type: 'results', data: getProductScores() });
+    });
+
+    howItWorksBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+    closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
+    
+    shareButton.addEventListener('click', handleShare);
+    closeShareModalBtn.addEventListener('click', () => shareModal.classList.add('hidden'));
+    shareModal.addEventListener('click', e => { if (e.target === shareModal) shareModal.classList.add('hidden'); });
+    
+    copyShareLinkBtn.addEventListener('click', copyShareLink);
+    
+    starRatingContainer.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const rating = parseInt(btn.getAttribute('data-value'));
+            submitRating(rating);
+        });
+    });
 }
 
 // --- CORE UI FLOW ---
